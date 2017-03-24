@@ -88,7 +88,7 @@
                             <input type="number" class="form-control" id="quantiteTache" placeholder="0" min="0" step="0.01">
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="montantTacheHTVA">Montant Unitaire</label>
+                            <label for="montantTacheHTVA">Montant HTVA</label>
                             <input type="number" class="form-control" id="montantTacheHtva" placeholder="0" step="0.01">
                         </div>
                     </div>
@@ -160,6 +160,18 @@
                                             <input type="email" class="form-control" id="mailClient" placeholder="Email">
                                         </div>
                                     </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="numChassisClient" class="col-md-4 control-label">N° chassis</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="numChassisClient" placeholder="N° de chassis">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="plaqueClient" class="col-md-4 control-label">Plaque</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="plaqueClient" placeholder="Plaque">
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -224,7 +236,7 @@
             return total;
         }
 
-        function afficherLocalStorage(){
+        function afficherLocalStorage(idFacture){
             var lignesCommande = store.get('lignesDeCommande'),
                 tabTitre = $('#tabLabelRow'),
                 j = false;
@@ -232,8 +244,10 @@
             supprimerLigneTabHTML();
             if (typeof lignesCommande != 'undefined') {
                 $.each(lignesCommande.commandLine, function (i, item) {
-                    ajouterLigneAuTabHTML(item);
-                    j = true;
+                    if (lignesCommande.commandLine[i].idFacture == idFacture) {
+                        ajouterLigneAuTabHTML(item);
+                        j = true;
+                    }
                 });
                 if (j) {
                     tabTitre.show();
@@ -256,8 +270,8 @@
         }
 
         function supprimerLigneTabHTML () {
-            var tabTitre = $('#tabLabelRow');
-            tabTitre.hide();
+            $('#tabLabelRow').hide();
+            $('#totalFacture').hide();
             $('#ligneAjoutTache').find("tr").remove();
         }
 
@@ -278,43 +292,39 @@
                     'quantite':quantite,
                     'montant':montant,
                     'total' : total,
-                    'id' : commandLinesStorage.compteur,
+                    'id' : commandLinesStorage.compteur+1,
                     'idFacture' : parseInt(idFac)
                 });
                 commandLinesStorage.compteur += 1;
                 store.set('lignesDeCommande',commandLinesStorage);
-                afficherLocalStorage();
+                afficherLocalStorage(idFac);
                 $('#descriptionTache').val("");
                 $('#quantiteTache').val("");
                 $('#montantTacheHtva').val("");
+                totalFacture = calculTotalFacture($('#numFacture').text());
+                $('#totalFacture').text(totalFacture);
+                $('#totalFacture').show();
             } else {
                 alert("Erreur d'encodage!!");
             }
         }
 
-        function afficherClientSelect() {
+        function afficherClientSelect(idFacture) {
             var listingClient = store.get('liste_Client'),
-                monSelect = $('#nameOfClient');
+                listingFacture = store.get('liste_Facture'),
+                monSelect = $('#nameOfClient'),
+                optionSelect = '';
+
             if (typeof listingClient != 'undefined') {
                 $.each(listingClient.client, function(i, item) {
-                    monSelect.append('<option value="' + listingClient.client[i].id + '">' + listingClient.client[i].id + ' ' +listingClient.client[i].nom + ' ' + listingClient.client[i].prenom+ '</option>');
+                    if (typeof idFacture != 'undefined') {
+                        if (listingClient.client[i].id == idFacture) {
+                            optionSelect = ' selected';
+                        }
+                    }
+                    monSelect.append('<option value="' + listingClient.client[i].id + '"' + optionSelect + '>' + getNumClientFacture(listingClient.client[i].id) + ' ' +listingClient.client[i].nom + ' ' + listingClient.client[i].prenom+ '</option>');
                 });
             }
-        }
-
-        function sauvegarderFacture() {
-            var listeFacture = store.get('liste_Facture');
-            if (typeof listeFacture == 'undefined') {
-                listeFacture = {
-                    'cpt' : 1,
-                    'facture' : []
-                };
-            }
-            listeFacture.facture.push({
-                'numeroFacture' : listeFacture.cpt,
-                'dateFacture' : '',
-                'totalFacture' : 0
-            });
         }
 
         function getNumeroFacture() {
@@ -323,14 +333,10 @@
                 numString = '',
                 num = 0;
             if (typeof listeFacture == 'undefined') {
-                numeroFac.text('00001');
+                numeroFac.text('000001');
             } else {
                 num = listeFacture.cpt + 1;
-                numString = num.toString();
-                while (numString.length<6) {
-                    numString = '0' + numString;
-                }
-                numeroFac.text(numString);
+                numeroFac.text(getNumClientFacture());
             }
             return false;
         }
@@ -349,7 +355,7 @@
 
             if (typeof commande != 'undefined') {
                 $.each(commande.commandLine, function(i, item) {
-                    if (commande.commandLine[i].idFacture == idFacture) {
+                    if (commande.commandLine[i].idFacture == parseInt(idFacture)) {
                         total += commande.commandLine[i].total;
                     }
                 });
@@ -357,22 +363,61 @@
             return total;
         }
 
+        function getNumClientFacture(id) {
+            var numero = id.toString();
+            while (numero.length<6) {
+                numero = '0' + numero;
+            }
+            return numero;
+        }
+
         $(function () {
-            var app = $('#app');
-            getNumeroFacture();
-            afficherLocalStorage();
-            afficherClientSelect();
+            var app = $('#app'),
+                url = window.location.search,
+                idFacture = parseInt(url.substr(11)),
+                listingFactures = store.get('liste_Facture'),
+                listingClients = store.get('liste_Client'),
+                annee = '',
+                mois='',
+                jour='';
+
+            if (url=="") {
+                //créer un nouveau numéro de facture
+                getNumeroFacture();
+
+                //remplir le <select client> avec les clients existants et "nouveau client" selected
+                afficherClientSelect();
+
+            } else {
+                //afficher le numéro de la facture correspondante
+                $('#numFacture').text(getNumClientFacture(idFacture));
+
+                //afficher la date de la facture correspondante
+                annee = listingFactures.facture[idFacture-1].date.substr(6);
+                mois = listingFactures.facture[idFacture-1].date.substr(3,2);
+                jour = listingFactures.facture[idFacture-1].date.substr(0,2);
+                $('#dateFacture').val(annee+'-'+mois+'-'+jour);
+
+                //remplir le <select client> avec les clients existants et client correspondant en "selected"
+                    //remplir le <select client> avec les clients existants
+                    //cherhcer l'<option> avec l'idclient correspondant a l'idclient de la facture et le mettre en selected
+                        //get facture.idclient
+                        //mettre <option value=facture.idClient> en selected
+                afficherClientSelect(idFacture);
+
+                //afficher les lignes de commandes avec le numéro de Facture correspondant
+                afficherLocalStorage(idFacture);
+            }
+
+
 
             app.on('click', '#saveLineFacture', function () {
                var description=$('#descriptionTache').val(),
                    quantite=$('#quantiteTache').val(),
                    montant=$('#montantTacheHtva').val();
-                   total = calculMontantTache(montant, quantite),
-                   totalFacture = 0;
+                   total = calculMontantTache(parseFloat(montant), parseFloat(quantite));
 
                saveCommandLine(description, quantite, montant, total);
-               totalFacture = calculTotalFacture($('#numFacture').text());
-               $('#totalFacture').text(totalFacture);
                return false;
             });
 
@@ -392,7 +437,7 @@
                 }
                 store.set('lignesDeCommande', facture);
                 supprimerLigneTabHTML();
-                afficherLocalStorage();
+                afficherLocalStorage(parseInt($('#numFacture')));
                 return false;
             });
 
@@ -418,7 +463,9 @@
                     facture.commandLine[j].montant = $('#montantTacheHtvapop').val();
                     store.set('lignesDeCommande', facture);
                     supprimerLigneTabHTML();
-                    afficherLocalStorage();
+                    afficherLocalStorage(parseInt($('#numFacture').text()));
+                    $('#totalFacture').text(calculTotalFacture(parseInt($('#numFacture').text())));
+                    $('#totalFacture').show();
                     $("#popupModif").modal('hide');
                 });
                 return false;
@@ -448,7 +495,9 @@
                     ville = $('#villeClient').val(),
                     pays = $('#paysClient').val(),
                     telephone = $('#telClient').val(),
-                    mail = $('#mailClient').val();
+                    mail = $('#mailClient').val(),
+                    chassis = $('#numChassisClient').val(),
+                    plaque = $('#plaqueClient').val();
 
                 //Création de la variable LocalStorage "liste_Client"
                 if (typeof listingClient == 'undefined') {
@@ -469,6 +518,8 @@
                     'pays' : pays,
                     'telephone' : telephone,
                     'mail' : mail,
+                    'chassis' : chassis,
+                    'plaque' : plaque,
                     'id' : listingClient.cpt + 1
                 });
                 listingClient.cpt += 1;
@@ -478,7 +529,7 @@
                 afficherInfoClient(nom, prenom, rue, numero, codePostal, ville, pays);
 
                 //Afficher nom prenom et id du client dans le select
-                $('#nameOfClient').append('<option value="' + listingClient.cpt + '" selected>' + listingClient.cpt + ' ' + nom + ' ' + prenom+ '</option>');
+                $('#nameOfClient').append('<option value="' + listingClient.cpt + '" selected>' + getNumClientFacture(listingClient.cpt) + ' ' + nom + ' ' + prenom+ '</option>');
 
                 //Masquer l'affichage de la modal
                 $('#popupClient').modal('hide');
@@ -487,24 +538,29 @@
             app.on('click', '#saveFacture', function() {
                 var listeFacture = store.get('liste_Facture'),
                     dateFac = $('#dateFacture').val(),
-                    idClient = $('#nameOfClient').val(),
-                    totalFacture = $('#totalFacture').text();
+                    idClientTxt = $('#nameOfClient').val(),
+                    totalFactureTxt = $('#totalFacture').text();
 
-                if (typeof listeFacture == 'undefined') {
-                    listeFacture = {
-                        'cpt' : 0,
-                        'facture' : []
-                    };
+                if (dateFac != '' && idClientTxt != 'newClient') {
+                    if (typeof listeFacture == 'undefined') {
+                        listeFacture = {
+                            'cpt' : 0,
+                            'facture' : []
+                        };
+                    }
+
+                    listeFacture.facture.push({
+                        'id' : listeFacture.cpt + 1,
+                        'date' : dateFac,
+                        'idClient' : parseInt(idClientTxt),
+                        'total' : parseFloat(totalFactureTxt)
+                    });
+                    listeFacture.cpt += 1;
+                    store.set('liste_Facture', listeFacture);
                 }
-
-                listeFacture.facture.push({
-                    'id' : listeFacture.cpt + 1,
-                    'date' : dateFac,
-                    'idClient' : idClient,
-                    'total' : totalFacture
-                });
-                listeFacture.cpt += 1;
-                store.set('liste_Facture', listeFacture);
+                else {
+                    alert('Erreur date ou client');
+                }
                 return false;
             });
         });

@@ -25,32 +25,12 @@
 							</tr>
 						</thead>
 						<tbody id="bodyFacture">
-							<!--
-                            <tr>
-								<td>003001</td>
-								<td>12/03/2017</td>
-								<td>Dupont</td>
-								<td>159€</td>
-							</tr>
-							<tr>
-								<td>002504</td>
-								<td>01/06/2016</td>
-								<td>Maurice</td>
-								<td>64.99€</td>
-							</tr>
-							<tr>
-								<td>001234</td>
-								<td>22/02/2017</td>
-								<td>Smith</td>
-								<td>687€</td>
-							</tr>
-                            -->
 						</tbody>
 					</table>
 				</div>
 			</div>
 			<div>
-				<button class="btn btn-primary pull-right" type="button" id="btnNewFacture">Nouvelle facture</button>
+				<a href="newFacture.html" class="btn btn-primary pull-right" id="btnNewFacture">Nouvelle facture</a>
 			</div>
 			<div class="row" id="divClient">
 				<div class="col-md-12">
@@ -64,25 +44,7 @@
 								<th>Date dernière facture</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td>000123</td>
-								<td>Sparrow</td>
-								<td>Jack</td>
-								<td>21/04/1879</td>
-							</tr>
-							<tr>
-								<td>003404</td>
-								<td>Lebotier</td>
-								<td>Bill</td>
-								<td>11/03/2000</td>
-							</tr>
-							<tr>
-								<td>666666</td>
-								<td>D'arc</td>
-								<td>Jeanne</td>
-								<td>13/03/1654</td>
-							</tr>
+						<tbody id="bodyClient">
 						</tbody>
 					</table>
 				</div>
@@ -188,8 +150,8 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <!-- source du store js https://github.com/marcuswestin/store.js/ -->
     <script src="../js/store.min.js"></script> <!--librairie de gestion du local storage -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script>
-
         function afficherFactures() {
             var listeFactures = store.get('liste_Facture');
 
@@ -203,8 +165,7 @@
         function insererFactureTabHTML(facture) {
             var tab = $('#bodyFacture'),
                 listeClient = store.get('liste_Client'),
-                j = null,
-                numFacture = "";
+                j = null;
 
             $.each(listeClient.client, function(i, item) {
                 if (listeClient.client[i].id == facture.idClient) {
@@ -212,35 +173,54 @@
                 }
             });
 
-            numFacture = facture.id.toString();
-            while (numFacture.length<6) {
-                numFacture = '0' + numFacture;
-            }
+            tab.append('<tr><td>' + getNumClientFacture(facture.id) + '</td>' +
+                '<td>' + facture.date + '</td>' +
+                '<td>' + listeClient.client[j].nom + ' ' + listeClient.client[j].prenom + '</td>' +
+                '<td>' + facture.total + '</td><td class="lienFacture"><a href="newFacture.html?idFacture=' + facture.id + '" class="glyphicon glyphicon-eye-open"</td></tr>');
+        }
 
-            tab.append('<tr><td>' + numFacture + '</td>' + 
-                '<td>' + facture.date + '</td>' + 
-                '<td>' + listeClient.client[j].nom + ' ' + listeClient.client[j].prenom + '</td>' + 
-                '<td>' + facture.total + '</td></tr>');
+        function afficherClients() {
+            //recupérer toutes les factures stockées dans le local storage 'liste_Facture'
+            //Afficher les informations de la facture dans le <table>
+            var listeClients = store.get('liste_Client');
+
+            if (typeof listeClients != 'undefined') {
+                $.each(listeClients.client, function(i, item) {
+                    insererClientTabHTML(listeClients.client[i]);
+                });
+            }
+        }
+
+        function insererClientTabHTML(client) {
+            var tab = $('#bodyClient');
+            tab.append('<tr><td>' + getNumClientFacture(client.id) + '</td>' +
+                '<td>' + client.nom + '</td>' +
+                '<td>' + client.prenom + '</td></tr>');
+        }
+
+        function getNumClientFacture(id) {
+            var numero = id.toString();
+            while (numero.length<6) {
+                numero = '0' + numero;
+            }
+            return numero;
         }
 
         $(function() {
-    		var appli = $('#container');
+    		var appli = $('.container');
 
+            //Afficher les dernières factures dans la page web
             afficherFactures();
-    		//Afficher les dernières factures dans la page web
-                //recupérer toutes les factures stockées dans le local storage 'liste_Facture'
-                //Afficher les informations de la facture dans le <table>
+
+            //Afficher les clients dans la page web
+            afficherClients();
 
             //Pour une facture "cliquée", ouvrir la page "newFacture.html" avec les informations de la facture en question
-
-            //Créer lien lors du clique sur le boutton "Nouvelle facture"
 
             //afficher la modal/popup pour la création d'un nouveau client
             appli.on('click', '#btnNewClient', function() {
     			$('#popupClient').modal('show');
     		});
-
-
     	});
     </script>
 </html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="../style.css" type="text/css">
+	<script type="text/javascript" src="../js/facture.js"></script>
+	<!--Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <!-- source du store js https://github.com/marcuswestin/store.js/ -->
+    <script src="../js/store.min.js"></script> <!--librairie de gestion du local storage -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<title>Nouvelle facture REPARTOUTAUTO</title>
+</head>
+<body>
+	<div id="blocpage">
+		<header>
+			<div class="entete">
+				<h1>Facturier REPARTOUTAUTO</h1>
+			</div>
+		</header>
+		<section>
+			<div class="container">
+				<div class="infoentreprise">
+					<div class="logoentr">
+						<img class="imgclemolette" src="../Pictures/clemolette.jpg"/>
+						<div class="nomentr">
+							REPARTOUTAUTO
+						</div>
+					</div>
+					<table class="tabentreprise">
+						<tbody>
+							<tr>
+								<td class="tdinfoentr" rowspan="3"><b>Adresse : </b></td>
+								<td class="tdadrentr">Rue de la Place, 1</td>
+							</tr>
+							<tr>
+								<td class="tdadrentr">12345 Tombouktou</td>
+							</tr>
+							<tr>
+								<td class="tdinfoentr">BELGIQUE</td>
+							</tr>
+							<tr>
+								<td class="tdinfoentr"><b>Tél : </b></td>
+								<td class="tdinfoentr">+0032 12 34 56 78</td>
+							</tr>
+							<tr>
+								<td class="tdinfoentr"><b>E-mail : </b></td>
+								<td class="tdinfoentr">info@mongarage.be</td>
+							</tr>
+							<tr>
+								<td class="tdinfoentr"><b>TVA : </b></td>
+								<td class="tdinfoentr">123 456 789</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="infofacture">
+					<h2>N° &nbspDE &nbspFACTURE : ######</h2>
+					<h3>DATE &nbspDE &nbspFACTURE :
+						<input type="date" name="" value="" placeholder="">
+					</h3>
+					<form class="formclientcl" name="formclient" action="" method="post" accept-charset="utf-8">
+						Client :
+						<select class="selectedclient" name="nomclient" required>
+							<option value="Jean">Jean</option>
+							<option value="Marc">Marc</option>
+							<option value="Pol">Pol</option>
+							<option value="Balthazar">Balthazar</option>
+							<option value="Joseph">Joseph</option>
+							<option value="newclient">Nouveau client</option>
+						</select>
+						<button type="button" onclick="addclient()">Valider</button>
+					</form>
+					<div class="infoclient">
+						<table class="tabclient">
+							<tbody>
+								<tr>
+									<td class="tdInfoClient">
+									</td>
+								</tr>
+								<tr>
+									<td class="tdInfoClient"></td>
+								</tr>
+								<tr>
+									<td class="tdInfoClient"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="form-group" id="idfacture">
+					<table>
+						<caption></caption>
+						<thead>
+							<tr>
+								<th class="coldescri">Description de la tâche</th>
+								<th class="colquantite">Quantité</th>
+								<th class="colprice">Montant HTVA</th>
+								<th class="coltotalhtva">Total HTVA</th>
+								<th class="coltotalhtva"></th>
+							</tr>
+						</thead>
+						<tbody id="listeTacheFacture">
+							<tr>
+								<td colspan="1">
+									<form id="formAddLineFacture">
+			                		<div class="form-group">
+		                    			<label for="newLineFacture">Description de la tâche</label>
+		                    			<input type="text" class="form-control" id="newLineFacture" placeholder="Changement des bougies de préchauffage">
+		                    			<label for="qteLineFacture">Quantité</label>
+		                    			<input type="number" class="form-control" id="qteLineFacture" placeholder="0" min="0" step="1">
+		                    			<label for="puLineFacture">PrixUnit HTVA</label>
+		                    			<input type="number" class="form-control" id="puLineFacture" placeholder="0" min="0" step="0.5">
+		                			</div>
+		                			<button class="btn btn-primary" id="addNewLineFacture" type="submit">
+		                				Ajouter
+		                			</button>
+		            			</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<button class="btn btn-primary btn-xs pull-right" id="submitFacture" type="submit">
+						Enregistrer la facture
+					</button>
+				</div>
+			</div>
+		</section>
+	</div>
+	<div class="popupclient">
+		<div id="popupnewclient">
+			<form class="formnewclient" action="" method="post" accept-charset="utf-8">
+				<img id="crossimg" src="../Pictures/closecross.jpg" alt="Fermer" onclick="closepopup()"/>
+				<h2>Nouveau client</h2>
+				<input id="name" name="name" placeholder="Nom" type="text">
+				<input id="rue" name="rue" placeholder="Rue et N°" type="text">
+				<input id="codep" name="codep" placeholder="Code postal" type="text">
+				<input id="city" name="city" placeholder="Localité" type="text">
+				<input id="pays" name="pays" placeholder="Pays" type="text">
+				<input id="tel" name="tel" placeholder="Téléphone/mobile" type="text">
+				<input id="mail" name="mail" placeholder="Adresse mail" type="text">
+				<button type="button" onclick="submitclient()">Enregistrer</button>
+			</form>
+		</div>
+	</div>
+	<script>
+		function affichageListeTacheLocalStorage() {
+			var listeTache = store.get('listeTache');
+			/*
+			$.each(listeTache, function (i, item) {
+                	ajouterUnElementDansLaTableHTML(item);
+                });
+            */
+           	ajouterUnElementDansLaTableHTML(listeTache);
+		}
+
+		function ajouterUnElementDansLaTableHTML(descript) {
+         	var list = $('#listeTacheFacture'),
+         	 descriptionTache = '<td class="coldescri">'+descript+'</td>';
+         	 /*
+         	 quantiteTache = '<td class="colquantite">'+quantite+'</td>',
+         	 montantTache = '<td class="colprice">'+prixUnit+'</td>';
+				*/
+			/*list.prepend('<tr>'+ descriptionTache + quantiteTache + montantTache + '</tr>');*/
+         	list.prepend('<tr>' + descriptionTache + '</tr>');
+      	}
+
+      	function sauvegardeTacheLocalStorage(descript, qte, prixu) {
+      		var ligneFacture = store.get('listeTache');
+      		if (typeof ligneFacture == 'undefined') {
+      			ligneFacture = {desciption:descript,quantite:qte,prixUnitaire:prixu};
+      		}
+      	}
+
+		$(function () {
+			var app = $('#blocpage');
+
+			app.on('click','#addNewLineFacture', function () {
+				/*
+				console.log('Nouvelle tâche');
+					1. Afficher Local storage si pas vide /!\
+					2. Créer un Json avec la structure "description/quantité/prixUnit"
+					3. Sauvegarder dans local storage
+					4. Afficher Local Storage
+				 */
+
+				var desc = $('#newLineFacture').val(),
+					quant = $('#qteLineFacture').val(),
+					putache = $('#puLineFacture').val();
+				
+				affichageListeTacheLocalStorage();
+				return false;
+			});
+
+			app.on('blur', '#prixTache', function () {
+				var prix = $('#prixTache').val(),
+					montant = parseFloat(prix),
+					total;
+
+				console.log(prix + " euros");
+
+				if (isNaN(prix)) {
+					console.log("Valeur incorrecte");
+				} else {
+					total = prix*1.21;
+					console.log(total);
+					$('#totalTVA').text(total);
+				}
+				return false;
+			});
+		});
+	</script>
+</body>
+</html>

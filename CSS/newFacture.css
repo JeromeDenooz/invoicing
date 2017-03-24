@@ -1,0 +1,46 @@
+#titre {
+    margin-bottom: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+#imgCleMolette {
+    width: 10%;
+    min-width: 90px;
+    border-radius: 15px 15px 15px 15px;
+    float: left;
+}
+
+.infoclient {
+    width: 100%;
+    display: none;
+}
+
+#tabClient {
+    font-size: 18px;
+}
+
+#coutTotalTache {
+    display: none;
+}
+
+#tabLabelRow {
+    display: none;
+}
+
+.btn {
+    margin: 5px;
+}
+
+.tdButton {
+    width: 80px;
+}
+
+.infoFacture {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}

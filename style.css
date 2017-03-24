@@ -1,0 +1,309 @@
+body {
+	background-color: rgba(192, 192, 192, 1.0);
+}
+
+#blocpage
+{
+    margin: 5px auto;
+    padding-top: 70px;
+}
+
+.entete {
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	padding: 10px 0px;
+	background-color: rgba(192, 192, 192, 1.0);
+}
+
+.entete h1 {
+	width: 450px;
+	padding: 10px;
+	font-size: 28px;
+	color: rgb(224, 122, 53);
+	text-align: center;
+	margin: auto;
+	border: 2px solid darkblue;
+	border-radius: 20px;
+}
+
+.listing {
+	width: 60%;
+	margin: 5px auto;
+	text-align: center;
+}
+
+.tablisting {
+	width: 100%;
+	margin: 40px auto;
+	border-spacing: 0px;
+	border: 2px solid black;
+	border-radius: 15px;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+}
+
+.tablisting caption {
+	font-size: 25px;
+	font-weight: bold;
+	height: 40px;
+}
+
+.tablisting th {
+	border-bottom: 2px solid black;
+	padding-left: 10px;
+	padding-right: 10px;
+	text-align: left;
+	height: 35px;
+}
+
+.tablisting td {
+	padding: 5px 10px 5px 10px;
+	height: 35px;
+	border-bottom: 1px solid black;
+}
+
+td.lastrow {
+	border: none;
+}
+
+.ajout {
+	width: 100px;
+	height: 40px;
+	margin-top: -30px;
+	margin-bottom: 50px;
+	padding: 5px;
+	border-radius: 15px;
+	background-color: grey;
+	font-size: 16px;
+	font-weight: bold;
+	float: right;
+	text-align: center;
+}
+
+.ajouta {
+	color: #DEDEDE;
+}
+
+.ajout:hover {
+	background-color: #666;
+}
+
+.ajouta:hover {
+	color: #FFF;
+}
+
+/* CSS de la page formfacture.html  ---
+-------------------------------------*/
+
+.container {
+	width: 80%;
+	margin: auto;
+}
+
+.infoentreprise {
+	width: 35%;
+	display: flex;
+	flex-direction: column;
+	margin-top: 0px;
+	margin-left: 40px;
+	float: left;
+}
+
+.logoentr {
+	width: 90%;
+	margin: auto;
+	position: relative;
+}
+
+.imgclemolette {
+	width: 35%;
+	min-width: 90px;
+	border-radius: 15px 15px 15px 15px;
+	float: left;
+}
+
+.nomentr {
+	font-size: 22px;
+	font-weight: bold;
+	font-style: italic;
+	text-align: center;
+	padding-right: 10px;
+	float: right;
+	width: 62%;
+	min-width: 200px;
+	position: absolute;
+	bottom: 15px;
+	right: 0;
+	background-color: #ABC;
+	color: rgb(224, 122, 53);
+}
+
+.tabentreprise {
+	width: 100%;
+	font-size: 14px;
+	font-family: Verdana;
+	border: 2px outset #AAA;
+	border-radius: 5px 5px 5px 5px;
+	margin-top: -25px;
+	padding-top: 30px;
+	float: left;
+}
+
+.tdinfoentr, .tdadrentr, .tdinfoclient, .tdadrclient {
+	vertical-align: top;
+	width: 60px;
+	padding: 5px 0px 5px 5px;
+	border: none;
+}
+
+.tdadrentr {
+	padding: 5px 0px 0px 5px;
+}
+
+.infofacture {
+	width: 40%;
+	margin-top: 0px;
+	margin-right: 50px;
+	float: right;
+	padding: 0px 5px;
+	letter-spacing: 0.0em;
+}
+
+.formclientcl {
+	font-size: 16px;
+	font-family: verdana;
+}
+
+.infoclient {
+	width: 80%;
+	visibility: hidden;
+}
+
+.tabclient {
+	font-size: 16px;
+	font-family: Verdana;
+	width: 100%;
+	font-weight: bold;
+	font-style: italic;
+	margin-top: 30px;
+	border: 2px inset grey;
+	border-radius: 5px;
+	padding: 5px;
+}
+
+.tdinfoclient {
+	width: 100%;
+	vertical-align: top;
+	padding: 0px;
+}
+
+.popupclient {
+	width:100%;
+	height:100%;
+	opacity:0.94;
+	top:0;
+	left:0;
+	position:fixed;
+	background-color:#313131;
+	overflow:auto;
+	display:none;
+}
+
+#popupnewclient {
+	position:absolute;
+	left:35%;
+	top:10%;
+	font-family:sans-serif;
+}
+
+.formnewclient {
+	max-width:300px;
+	min-width:250px;
+	width: 30%;
+	padding:10px 50px;
+	border:2px solid gray;
+	border-radius:10px;
+	font-family:sans-serif;
+	background-color:#fff;
+}
+
+.formnewclient h2 {
+	background-color:#FEFFAA;
+	padding:10px 25px;
+	margin:-10px -50px;
+	text-align:center;
+	border-radius:10px 10px 0 0;
+	font-weight: normal;
+	height: 120%;
+}
+
+.formnewclient input, .formnewclient button{
+	width: 80%;
+	font-size: 14px;
+	display: block;
+	margin: auto;
+	margin-top: 20px;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+.formnewclient button {
+	background-color:#FEFF33;
+}
+
+#crossimg {
+	position: absolute;
+	opacity: 0.75;
+	top: -10px;
+	right: -10px;
+	height: 30px;
+	width: 30px;
+	border-radius: 15px;
+}
+
+#crossimg:hover {
+	opacity: 1;
+}
+
+#idfacture {
+	width: 100%;
+	padding-top: 20px;
+	float: left;
+	display: none;
+}
+
+#idfacture table {
+	width: 80%;
+	min-width: 1000px;
+	border: 2px solid black;
+	border-radius: 8px;
+	margin: 0 auto;
+	border-spacing: 0px;
+	overflow: hidden;
+}
+
+#idfacture th {
+	background-color: rgba(255, 130, 0, 1.0);
+	border-bottom: 2px solid black;
+	padding: 5px;
+}
+
+.coldescri {
+	width: 60%;
+	text-align: left;
+}
+
+.colquantite, .colprice, .coltotalhtva {
+	width: 13%;
+	text-align: center;
+}
+
+#idfacture tr td input {
+	width: 92%;
+	margin: 3px auto;
+	border-radius: 5px;
+	padding: 3px;
+}

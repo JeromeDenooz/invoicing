@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../CSS/newFacture.css" type="text/css">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <title>Garage Alain Buron</title>
+    </head>
+    <body>
+        <div class="container" id="app">
+            <h1 class="text-center" id="titre">Garage Alain Buron</h1>
+            <div class="row">
+                <div class="col-md-5" id="infoEntreprise">
+                    <div class="row">
+                        <img class="img-responsive" id="imgCleMolette" src="../Pictures/clemolette.jpg"/>
+                        <h2>REPARTOUTAUTO</h2>
+                    </div>
+                    <div class="row">
+                        <address class="col-md-8 col-md-offset-2">
+                            Rue de la Place, 1<br>
+                            12345 Tombouktou<br>
+                            BELGIQUE<br>
+                            Phone : +0032 12 34 56 78<br>
+                            Mail : info@mongarage.be<br>
+                            TVA : 123 456 789<br>
+                        </address>
+                    </div>
+                </div>
+                <div class="col-md-5 col-md-offset-2" id="infoClient">
+                    <div class="row infoFacture">
+                        Facture n° <span id="numFacture"></span>
+                    </div>
+                    <div class="row infoFacture">
+                        <label for="dateFacture">Date de facture </label>
+                        <input id="dateFacture" type="date" name="" value="">
+                    </div>
+                    <div class="row infoFacture">
+                        <form class="formclientcl form-horizontal" name="formclient" action="" method="post" accept-charset="utf-8">
+                            <div class="form-group">
+                                <label for="nameOfClient" class="control-label col-md-2">Client</label>
+                                <div class="col-md-6">
+                                    <select class="form-control" name="nomclient" id="nameOfClient" required>
+                                        <option value="newClient">Nouveau client</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary btn-xs" type="button" id="buttonClient">OK</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row">
+                        <div class="infoclient col-md-8">
+                            <table class="table">
+                                <tbody  id="tabClient">
+                                <tr><td id="nomPrenom"></td></tr>
+                                <tr><td id="rue"></td></tr>
+                                <tr><td id="ville"></td></tr>
+                                <tr><td id="pays"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="listOfTask">
+                <table class="table table-condensed" >
+                    <thead>
+                        <tr id="tabLabelRow">
+                            <th>Description</th>
+                            <th>Quantité</th>
+                            <th>Montant HTVA</th>
+                            <th>Total HTVA</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr><td colspan="3"></td><td id="totalFacture"></td></tr>
+                    </tfoot>
+                    <tbody id="ligneAjoutTache">
+                    </tbody>
+                </table>
+                <form>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="descriptionTache">Description</label>
+                            <input type="text" class="form-control" id="descriptionTache" placeholder="Description">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="quantiteTache">Quantité</label>
+                            <input type="number" class="form-control" id="quantiteTache" placeholder="0" min="0" step="0.01">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="montantTacheHTVA">Montant Unitaire</label>
+                            <input type="number" class="form-control" id="montantTacheHtva" placeholder="0" step="0.01">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="saveLineFacture" type="submit">Valider</button>
+                </form>
+                <button class="btn btn-primary" id="saveFacture" type="submit">Clôturer la facture</button>
+            </div>
+            <div id="popupClient" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Enregistrement d'un nouveau client</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal" action="">
+                                <div class="row">
+                                    <div class="form-group col-md-10">
+                                        <label for="nomClient" class="col-md-4 control-label">Nom</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="nomClient" placeholder="Nom">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="prenomClient" class="col-md-4 control-label">Prénom</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="prenomClient" placeholder="Prénom">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="rueClient" class="col-md-4 control-label">Rue</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="rueClient" placeholder="Rue">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="numeroClient" class="col-md-4 control-label">Numéro</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="numeroClient" placeholder="Numéro">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="codePostalClient" class="col-md-4 control-label">Code postal</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="codePostalClient" placeholder="Code postal">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="villeClient" class="col-md-4 control-label">Ville</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="villeClient" placeholder="Ville">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="paysClient" class="col-md-4 control-label">Pays</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="paysClient" placeholder="Pays">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="telClient" class="col-md-4 control-label">Téléphone</label>
+                                        <div class="col-md-8">
+                                            <input type="tel" class="form-control" id="telClient" placeholder="Téléphone">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="mailClient" class="col-md-4 control-label">Email</label>
+                                        <div class="col-md-8">
+                                            <input type="email" class="form-control" id="mailClient" placeholder="Email">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                            <button type="button" class="btn btn-primary" id="saveClient">Enregistrer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="popupModif" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Modification ligne de facture</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="row">
+                                    <div class="form-group col-md-4">
+                                        <label for="descriptionTachepop">Description</label>
+                                        <input type="text" class="form-control" id="descriptionTachepop" placeholder="Description">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="quantiteTachepop">Quantité</label>
+                                        <input type="number" class="form-control" id="quantiteTachepop" placeholder="0" min="0" step="0.01">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="montantTacheHTVApop">Montant Unitaire</label>
+                                        <input type="number" class="form-control" id="montantTacheHtvapop" placeholder="0" step="0.01">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                            <button type="button" class="btn btn-primary" id="savePopup">Enregistrer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="../js/facture.js"></script>
+    <!--Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <!-- source du store js https://github.com/marcuswestin/store.js/ -->
+    <script src="../js/store.min.js"></script> <!--librairie de gestion du local storage -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script>
+        function calculMontantTache (montant, quantite) {
+            var prix = parseFloat(montant),
+                quantite = parseFloat(quantite),
+                total = null;
+
+            if (isNaN(prix) || isNaN(quantite)) {
+                total = 0;
+            } else {
+                total = prix*quantite;
+            }
+            return total;
+        }
+
+        function afficherLocalStorage(){
+            var lignesCommande = store.get('lignesDeCommande'),
+                tabTitre = $('#tabLabelRow'),
+                j = false;
+
+            supprimerLigneTabHTML();
+            if (typeof lignesCommande != 'undefined') {
+                $.each(lignesCommande.commandLine, function (i, item) {
+                    ajouterLigneAuTabHTML(item);
+                    j = true;
+                });
+                if (j) {
+                    tabTitre.show();
+                }
+            }
+        }
+
+        function ajouterLigneAuTabHTML (ligne){
+            var lignesCommande = $('#ligneAjoutTache');
+
+            lignesCommande.append('<tr>' +
+                '<td>' + ligne.description + '</td>' +
+                '<td>' + ligne.quantite + '</td>' +
+                '<td>' + ligne.montant + '</td>' +
+                '<td>' + calculMontantTache(ligne.montant, ligne.quantite) + '</td>' +
+                '<td class="tdButton">' +
+                    '<button class="btn btn-primary btn-xs pull-right btn-suppr" type="submit" data-tache="' + ligne.id + '"><i class="glyphicon glyphicon-trash"></i></button>' +
+                    '<button class="btn btn-primary btn-xs pull-right btn-modif" type="submit" data-tache="' + ligne.id + '"><i class="glyphicon glyphicon-pencil"></i></button>' +
+                '</td></tr>');
+        }
+
+        function supprimerLigneTabHTML () {
+            var tabTitre = $('#tabLabelRow');
+            tabTitre.hide();
+            $('#ligneAjoutTache').find("tr").remove();
+        }
+
+        function saveCommandLine(description, quantite, montant, total) {
+            var commandLinesStorage = store.get('lignesDeCommande'),
+                ligne = $('#ligneAjoutTache'),
+                idFac = $('#numFacture').text();
+
+            if (description != "" && quantite !="" && montant != ""){
+                if (typeof commandLinesStorage == "undefined") {
+                    commandLinesStorage = {
+                        'compteur': 0,
+                        'commandLine': []
+                    };
+                }
+                commandLinesStorage.commandLine.push({
+                    'description':description,
+                    'quantite':quantite,
+                    'montant':montant,
+                    'total' : total,
+                    'id' : commandLinesStorage.compteur,
+                    'idFacture' : parseInt(idFac)
+                });
+                commandLinesStorage.compteur += 1;
+                store.set('lignesDeCommande',commandLinesStorage);
+                afficherLocalStorage();
+                $('#descriptionTache').val("");
+                $('#quantiteTache').val("");
+                $('#montantTacheHtva').val("");
+            } else {
+                alert("Erreur d'encodage!!");
+            }
+        }
+
+        function afficherClientSelect() {
+            var listingClient = store.get('liste_Client'),
+                monSelect = $('#nameOfClient');
+            if (typeof listingClient != 'undefined') {
+                $.each(listingClient.client, function(i, item) {
+                    monSelect.append('<option value="' + listingClient.client[i].id + '">' + listingClient.client[i].id + ' ' +listingClient.client[i].nom + ' ' + listingClient.client[i].prenom+ '</option>');
+                });
+            }
+        }
+
+        function sauvegarderFacture() {
+            var listeFacture = store.get('liste_Facture');
+            if (typeof listeFacture == 'undefined') {
+                listeFacture = {
+                    'cpt' : 1,
+                    'facture' : []
+                };
+            }
+            listeFacture.facture.push({
+                'numeroFacture' : listeFacture.cpt,
+                'dateFacture' : '',
+                'totalFacture' : 0
+            });
+        }
+
+        function getNumeroFacture() {
+            var listeFacture = store.get('liste_Facture'),
+                numeroFac = $('#numFacture'),
+                numString = '',
+                num = 0;
+            if (typeof listeFacture == 'undefined') {
+                numeroFac.text('00001');
+            } else {
+                num = listeFacture.cpt + 1;
+                numString = num.toString();
+                while (numString.length<6) {
+                    numString = '0' + numString;
+                }
+                numeroFac.text(numString);
+            }
+            return false;
+        }
+
+        function afficherInfoClient(nom, prenom, rue, numero, codePostal, ville, pays) {
+            $('#nomPrenom').text(nom + ' ' + prenom);
+            $('#rue').text(rue + ' ' + numero);
+            $('#ville').text(codePostal + ' ' + ville);
+            $('#pays').text(pays);
+            $('.infoclient').show();
+        }
+
+        function calculTotalFacture(idFacture) {
+            var total = 0,
+                commande = store.get('lignesDeCommande');
+
+            if (typeof commande != 'undefined') {
+                $.each(commande.commandLine, function(i, item) {
+                    if (commande.commandLine[i].idFacture == idFacture) {
+                        total += commande.commandLine[i].total;
+                    }
+                });
+            }
+            return total;
+        }
+
+        $(function () {
+            var app = $('#app');
+            getNumeroFacture();
+            afficherLocalStorage();
+            afficherClientSelect();
+
+            app.on('click', '#saveLineFacture', function () {
+               var description=$('#descriptionTache').val(),
+                   quantite=$('#quantiteTache').val(),
+                   montant=$('#montantTacheHtva').val();
+                   total = calculMontantTache(montant, quantite),
+                   totalFacture = 0;
+
+               saveCommandLine(description, quantite, montant, total);
+               totalFacture = calculTotalFacture($('#numFacture').text());
+               $('#totalFacture').text(totalFacture);
+               return false;
+            });
+
+            app.on('click', '.btn-suppr', function () {
+                var id = $(this).data("tache"),
+                    facture = store.get('lignesDeCommande'),
+                    j = null;
+
+                $.each(facture.commandLine, function(i, item) {
+                    if (item.id == id) {
+                        j=i;
+                    }
+                });
+
+                if (j != null) {
+                    facture.commandLine.splice(j, 1);
+                }
+                store.set('lignesDeCommande', facture);
+                supprimerLigneTabHTML();
+                afficherLocalStorage();
+                return false;
+            });
+
+            app.on('click', '.btn-modif', function() {
+                var facture = store.get('lignesDeCommande'),
+                    id = $(this).data("tache"),
+                    j = null;
+
+                $.each(facture.commandLine, function(i, item) {
+                    if (item.id == id) {
+                        j=i;
+                    }
+                });
+
+                $('#descriptionTachepop').val(facture.commandLine[j].description);
+                $('#quantiteTachepop').val(facture.commandLine[j].quantite);
+                $('#montantTacheHtvapop').val(facture.commandLine[j].montant);
+                $("#popupModif").modal('show');
+
+                $('#savePopup').on('click', function() {
+                    facture.commandLine[j].description = $('#descriptionTachepop').val();
+                    facture.commandLine[j].quantite = $('#quantiteTachepop').val();
+                    facture.commandLine[j].montant = $('#montantTacheHtvapop').val();
+                    store.set('lignesDeCommande', facture);
+                    supprimerLigneTabHTML();
+                    afficherLocalStorage();
+                    $("#popupModif").modal('hide');
+                });
+                return false;
+            });
+
+            app.on('click', '#buttonClient', function() {
+                var idClient = $('#nameOfClient').val(),
+                    j = 0,
+                    listingClient = store.get('liste_Client');
+
+                if (idClient == 'newClient') {
+                    $('#popupClient').modal('show');
+                } else {
+                    afficherInfoClient(listingClient.client[idClient-1].nom, listingClient.client[idClient-1].prenom, listingClient.client[idClient-1].rue, listingClient.client[idClient-1].numero, listingClient.client[idClient-1].codePostal, listingClient.client[idClient-1].ville, listingClient.client[idClient-1].pays);
+                }
+                return false;
+            });
+
+            app.on('click', '#saveClient', function() {
+                var listingClient = store.get('liste_Client'),
+                    tabClient = $('#tabClient'),
+                    nom = $('#nomClient').val(),
+                    prenom = $('#prenomClient').val(),
+                    rue = $('#rueClient').val(),
+                    numero = $('#numeroClient').val(),
+                    codePostal = $('#codePostalClient').val(),
+                    ville = $('#villeClient').val(),
+                    pays = $('#paysClient').val(),
+                    telephone = $('#telClient').val(),
+                    mail = $('#mailClient').val();
+
+                //Création de la variable LocalStorage "liste_Client"
+                if (typeof listingClient == 'undefined') {
+                    listingClient = {
+                        'cpt' : 0,
+                        'client' : []
+                    };
+                }
+
+                //Ajout d'un client dans le local storage
+                listingClient.client.push({
+                    'nom' : nom,
+                    'prenom' : prenom,
+                    'rue' : rue,
+                    'numero' : numero,
+                    'codePostal' : codePostal,
+                    'ville' : ville,
+                    'pays' : pays,
+                    'telephone' : telephone,
+                    'mail' : mail,
+                    'id' : listingClient.cpt + 1
+                });
+                listingClient.cpt += 1;
+                store.set('liste_Client', listingClient);
+
+                //Affichage des coordonnées du nouveau client dans la page HTML + display le div correspondant
+                afficherInfoClient(nom, prenom, rue, numero, codePostal, ville, pays);
+
+                //Afficher nom prenom et id du client dans le select
+                $('#nameOfClient').append('<option value="' + listingClient.cpt + '" selected>' + listingClient.cpt + ' ' + nom + ' ' + prenom+ '</option>');
+
+                //Masquer l'affichage de la modal
+                $('#popupClient').modal('hide');
+            });
+
+            app.on('click', '#saveFacture', function() {
+                var listeFacture = store.get('liste_Facture'),
+                    dateFac = $('#dateFacture').val(),
+                    idClient = $('#nameOfClient').val(),
+                    totalFacture = $('#totalFacture').text();
+
+                if (typeof listeFacture == 'undefined') {
+                    listeFacture = {
+                        'cpt' : 0,
+                        'facture' : []
+                    };
+                }
+
+                listeFacture.facture.push({
+                    'id' : listeFacture.cpt + 1,
+                    'date' : dateFac,
+                    'idClient' : idClient,
+                    'total' : totalFacture
+                });
+                listeFacture.cpt += 1;
+                store.set('liste_Facture', listeFacture);
+                return false;
+            });
+        });
+    </script>
+</html>

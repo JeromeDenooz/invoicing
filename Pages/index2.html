@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../CSS/newFacture.css" type="text/css">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <title>Garage Buron</title>
+    </head>
+    <body>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 col-md-offset-3">
+					<h1>Garage Buron</h1>
+				</div>
+			</div>
+			<div class="row" id="divFacture">
+				<div class="col-md-12">
+					<table class="table table-bordered">
+						<caption><h2>Listing factures</h2></caption>
+						<thead>
+							<tr>
+								<th>Numéro de facture</th>
+								<th>Date</th>
+								<th>Référence client</th>
+								<th>Total facture</th>
+							</tr>
+						</thead>
+						<tbody id="bodyFacture">
+							<!--
+                            <tr>
+								<td>003001</td>
+								<td>12/03/2017</td>
+								<td>Dupont</td>
+								<td>159€</td>
+							</tr>
+							<tr>
+								<td>002504</td>
+								<td>01/06/2016</td>
+								<td>Maurice</td>
+								<td>64.99€</td>
+							</tr>
+							<tr>
+								<td>001234</td>
+								<td>22/02/2017</td>
+								<td>Smith</td>
+								<td>687€</td>
+							</tr>
+                            -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div>
+				<button class="btn btn-primary pull-right" type="button" id="btnNewFacture">Nouvelle facture</button>
+			</div>
+			<div class="row" id="divClient">
+				<div class="col-md-12">
+					<table class="table table-bordered">
+						<caption><h2>Listing clients</h2></caption>
+						<thead>
+							<tr>
+								<th>Numéro de client</th>
+								<th>Nom</th>
+								<th>Prénom</th>
+								<th>Date dernière facture</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>000123</td>
+								<td>Sparrow</td>
+								<td>Jack</td>
+								<td>21/04/1879</td>
+							</tr>
+							<tr>
+								<td>003404</td>
+								<td>Lebotier</td>
+								<td>Bill</td>
+								<td>11/03/2000</td>
+							</tr>
+							<tr>
+								<td>666666</td>
+								<td>D'arc</td>
+								<td>Jeanne</td>
+								<td>13/03/1654</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div>
+				<button class="btn btn-primary pull-right" type="button" id="btnNewClient">Nouveau client</button>
+			</div>
+			<div id="popupClient" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Enregistrement d'un nouveau client</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal" action="">
+                                <div class="row">
+                                    <div class="form-group col-md-10">
+                                        <label for="nomClient" class="col-md-4 control-label">Nom</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="nomClient" placeholder="Nom">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="prenomClient" class="col-md-4 control-label">Prénom</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="prenomClient" placeholder="Prénom">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="rueClient" class="col-md-4 control-label">Rue</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="rueClient" placeholder="Rue">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="numeroClient" class="col-md-4 control-label">Numéro</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="numeroClient" placeholder="Numéro">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="boiteClient" class="col-md-4 control-label">Boite</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="boiteClient" placeholder="Boite">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="codePostalClient" class="col-md-4 control-label">Code postal</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="codePostalClient" placeholder="Code postal">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="villeClient" class="col-md-4 control-label">Ville</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="villeClient" placeholder="Ville">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="paysClient" class="col-md-4 control-label">Pays</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="paysClient" placeholder="Pays">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="telClient" class="col-md-4 control-label">Téléphone</label>
+                                        <div class="col-md-8">
+                                            <input type="tel" class="form-control" id="telClient" placeholder="Téléphone">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="mailClient" class="col-md-4 control-label">Email</label>
+                                        <div class="col-md-8">
+                                            <input type="email" class="form-control" id="mailClient" placeholder="Email">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="numChassisClient" class="col-md-4 control-label">N° chassis</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="numChassisClient" placeholder="N° de chassis">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-10">
+                                        <label for="plaqueClient" class="col-md-4 control-label">Plaque</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="plaqueClient" placeholder="Plaque">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                            <button type="button" class="btn btn-primary" id="saveClient">Enregistrer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+    </body>
+    <!--Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <!-- source du store js https://github.com/marcuswestin/store.js/ -->
+    <script src="../js/store.min.js"></script> <!--librairie de gestion du local storage -->
+    <script>
+
+        function afficherFactures() {
+            var listeFactures = store.get('liste_Facture');
+
+            if (typeof listeFactures != 'undefined') {
+                $.each(listeFactures.facture, function(i, item) {
+                    insererFactureTabHTML(listeFactures.facture[i]);
+                });
+            }
+        };
+
+        function insererFactureTabHTML(facture) {
+            var tab = $('#bodyFacture'),
+                listeClient = store.get('liste_Client'),
+                j = null,
+                numFacture = "";
+
+            $.each(listeClient.client, function(i, item) {
+                if (listeClient.client[i].id == facture.idClient) {
+                    j = i;
+                }
+            });
+
+            numFacture = facture.id.toString();
+            while (numFacture.length<6) {
+                numFacture = '0' + numFacture;
+            }
+
+            tab.append('<tr><td>' + numFacture + '</td>' + 
+                '<td>' + facture.date + '</td>' + 
+                '<td>' + listeClient.client[j].nom + ' ' + listeClient.client[j].prenom + '</td>' + 
+                '<td>' + facture.total + '</td></tr>');
+        }
+
+        $(function() {
+    		var appli = $('#container');
+
+            afficherFactures();
+    		//Afficher les dernières factures dans la page web
+                //recupérer toutes les factures stockées dans le local storage 'liste_Facture'
+                //Afficher les informations de la facture dans le <table>
+
+            //Pour une facture "cliquée", ouvrir la page "newFacture.html" avec les informations de la facture en question
+
+            //Créer lien lors du clique sur le boutton "Nouvelle facture"
+
+            //afficher la modal/popup pour la création d'un nouveau client
+            appli.on('click', '#btnNewClient', function() {
+    			$('#popupClient').modal('show');
+    		});
+
+
+    	});
+    </script>
+</html>

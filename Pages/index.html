@@ -3,7 +3,7 @@
     <head>
         <link rel="stylesheet" href="../CSS/newFacture.css" type="text/css">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
-        <title>Garage Buron</title>
+        <title>Garage Alain Buron</title>
     </head>
     <body>
 		<div class="container">
@@ -180,22 +180,41 @@
         }
 
         function afficherClients() {
-            //recupérer toutes les factures stockées dans le local storage 'liste_Facture'
+            //Recupérer toutes les factures stockées dans le local storage 'liste_Facture'
             //Afficher les informations de la facture dans le <table>
-            var listeClients = store.get('liste_Client');
+            var listeClients = store.get('liste_Client'),
+                listeFactures = store.get('liste_Facture'),
+                idLastFacture = 0,
+                dateFac = '';
 
             if (typeof listeClients != 'undefined') {
                 $.each(listeClients.client, function(i, item) {
-                    insererClientTabHTML(listeClients.client[i]);
+                    if (typeof listeFactures != 'undefined') {
+                        $.each(listeFactures.facture, function(j,item) {
+                            if (listeClients.client[i].id == listeFactures.facture[j].idClient && listeFactures.facture[j].id > idLastFacture) {
+                                idLastFacture = listeFactures.facture[j].id;
+                            }
+                        });
+                    }
+                    if (idLastFacture != 0) {
+                        dateFac = listeFactures.facture[idLastFacture-1].date
+                    }
+                    insererClientTabHTML(listeClients.client[i], dateFac);
                 });
             }
         }
 
-        function insererClientTabHTML(client) {
-            var tab = $('#bodyClient');
+        function insererClientTabHTML(client, dateFac) {
+            var tab = $('#bodyClient'),
+                date = '';
+
+            if (typeof dateFac != 'undefined') {
+                date = dateFac;
+            }
             tab.append('<tr><td>' + getNumClientFacture(client.id) + '</td>' +
                 '<td>' + client.nom + '</td>' +
-                '<td>' + client.prenom + '</td></tr>');
+                '<td>' + client.prenom + '</td>' +
+                '<td>' + date + '</td></tr>');
         }
 
         function getNumClientFacture(id) {
@@ -215,12 +234,57 @@
             //Afficher les clients dans la page web
             afficherClients();
 
-            //Pour une facture "cliquée", ouvrir la page "newFacture.html" avec les informations de la facture en question
-
             //afficher la modal/popup pour la création d'un nouveau client
             appli.on('click', '#btnNewClient', function() {
     			$('#popupClient').modal('show');
     		});
+
+            //Sauvegarder le nouveau client
+            appli.on('click', '#saveClient', function() {
+                var listingClient = store.get('liste_Client'),
+                    nom = $('#nomClient').val(),
+                    prenom = $('#prenomClient').val(),
+                    rue = $('#rueClient').val(),
+                    numero = $('#numeroClient').val(),
+                    codePostal = $('#codePostalClient').val(),
+                    ville = $('#villeClient').val(),
+                    pays = $('#paysClient').val(),
+                    telephone = $('#telClient').val(),
+                    mail = $('#mailClient').val(),
+                    chassis = $('#numChassisClient').val(),
+                    plaque = $('#plaqueClient').val();
+
+                //Création de la variable LocalStorage "liste_Client"
+                if (typeof listingClient == 'undefined') {
+                    listingClient = {
+                        'cpt' : 0,
+                        'client' : []
+                    };
+                }
+
+                //Ajout d'un client dans le local storage
+                listingClient.client.push({
+                    'nom' : nom,
+                    'prenom' : prenom,
+                    'rue' : rue,
+                    'numero' : numero,
+                    'codePostal' : codePostal,
+                    'ville' : ville,
+                    'pays' : pays,
+                    'telephone' : telephone,
+                    'mail' : mail,
+                    'chassis' : chassis,
+                    'plaque' : plaque,
+                    'id' : listingClient.cpt + 1
+                });
+                listingClient.cpt += 1;
+                store.set('liste_Client', listingClient);
+                //Masquer l'affichage de la modal
+                $('#popupClient').modal('hide');
+
+                //Faire un refresh de la page index.html ??
+
+            });
     	});
     </script>
 </html>

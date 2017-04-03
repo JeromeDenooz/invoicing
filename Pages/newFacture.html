@@ -71,8 +71,19 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr><td colspan="3"></td><td id="totalFacture"></td></tr>
+                    <tfoot id="footFacture">
+                        <tr>
+                            <td colspan="3" class="text-right noBorder"><strong>Total HTVA : </strong></td>
+                            <td id="totalFacture" class="noBorder"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right noBorder"><strong>TVA : </strong></td>
+                            <td id="totalTVA" class="noBorder"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right noBorder"><strong>Total TTC : </strong></td>
+                            <td id="totalFactureTVA" class="noBorder"></td>
+                        </tr>
                     </tfoot>
                     <tbody id="ligneAjoutTache">
                     </tbody>
@@ -95,6 +106,7 @@
                     <button class="btn btn-primary" id="saveLineFacture" type="submit">Valider</button>
                 </form>
                 <button class="btn btn-primary" id="saveFacture" type="submit">Clôturer la facture</button>
+                <button class="btn btn-primary pull-right" id="cancelFacture">Annulation</button>
             </div>
             <div id="popupClient" class="modal fade">
                 <div class="modal-dialog">
@@ -251,6 +263,8 @@
                 });
                 if (j) {
                     tabTitre.show();
+                    $('#totalFacture').text(calculTotalFacture()+' €');
+                    $('#footFacture').show();
                 }
             }
         }
@@ -261,8 +275,8 @@
             lignesCommande.append('<tr>' +
                 '<td>' + ligne.description + '</td>' +
                 '<td>' + ligne.quantite + '</td>' +
-                '<td>' + ligne.montant + '</td>' +
-                '<td>' + calculMontantTache(ligne.montant, ligne.quantite) + '</td>' +
+                '<td>' + ligne.montant + ' €</td>' +
+                '<td class="montantTache">' + calculMontantTache(ligne.montant, ligne.quantite) + ' €</td>' +
                 '<td class="tdButton">' +
                     '<button class="btn btn-primary btn-xs pull-right btn-suppr" type="submit" data-tache="' + ligne.id + '"><i class="glyphicon glyphicon-trash"></i></button>' +
                     '<button class="btn btn-primary btn-xs pull-right btn-modif" type="submit" data-tache="' + ligne.id + '"><i class="glyphicon glyphicon-pencil"></i></button>' +
@@ -271,7 +285,7 @@
 
         function supprimerLigneTabHTML () {
             $('#tabLabelRow').hide();
-            $('#totalFacture').hide();
+            $('#footFacture').hide();
             $('#ligneAjoutTache').find("tr").remove();
         }
 
@@ -301,9 +315,9 @@
                 $('#descriptionTache').val("");
                 $('#quantiteTache').val("");
                 $('#montantTacheHtva').val("");
-                totalFacture = calculTotalFacture($('#numFacture').text());
-                $('#totalFacture').text(totalFacture);
-                $('#totalFacture').show();
+                totalFacture = calculTotalFacture();
+                $('#totalFacture').text(totalFacture+' €');
+                $('#footFacture').show();
             } else {
                 alert("Erreur d'encodage!!");
             }
@@ -313,17 +327,24 @@
             var listingClient = store.get('liste_Client'),
                 listingFacture = store.get('liste_Facture'),
                 monSelect = $('#nameOfClient'),
-                optionSelect = '';
+                optionSelect = '',
+                j=null;
 
             if (typeof listingClient != 'undefined') {
                 $.each(listingClient.client, function(i, item) {
                     if (typeof idFacture != 'undefined') {
-                        if (listingClient.client[i].id == idFacture) {
+                        if (listingClient.client[i].id == listingFacture.facture[idFacture-1].idClient) {
                             optionSelect = ' selected';
+                            j=i;
                         }
                     }
                     monSelect.append('<option value="' + listingClient.client[i].id + '"' + optionSelect + '>' + getNumClientFacture(listingClient.client[i].id) + ' ' +listingClient.client[i].nom + ' ' + listingClient.client[i].prenom+ '</option>');
+                    optionSelect = '';
                 });
+                if (j!=null){
+                    //Affichage des coordonnées du nouveau client dans la page HTML + display le div correspondant
+                    afficherInfoClient(listingClient.client[j]);
+                }
             }
         }
 
@@ -336,31 +357,31 @@
                 numeroFac.text('000001');
             } else {
                 num = listeFacture.cpt + 1;
-                numeroFac.text(getNumClientFacture());
+                numeroFac.text(getNumClientFacture(num));
             }
             return false;
         }
 
-        function afficherInfoClient(nom, prenom, rue, numero, codePostal, ville, pays) {
-            $('#nomPrenom').text(nom + ' ' + prenom);
-            $('#rue').text(rue + ' ' + numero);
-            $('#ville').text(codePostal + ' ' + ville);
-            $('#pays').text(pays);
+        function afficherInfoClient(client) {
+            $('#nomPrenom').text(client.nom + ' ' + client.prenom);
+            $('#rue').text(client.rue + ' ' + client.numero);
+            $('#ville').text(client.codePostal + ' ' + client.ville);
+            $('#pays').text(client.pays);
             $('.infoclient').show();
         }
 
-        function calculTotalFacture(idFacture) {
+        function calculTotalFacture() {
             var total = 0,
-                commande = store.get('lignesDeCommande');
+                tabMontant = $('.montantTache'),
+                i=0;
 
-            if (typeof commande != 'undefined') {
-                $.each(commande.commandLine, function(i, item) {
-                    if (commande.commandLine[i].idFacture == parseInt(idFacture)) {
-                        total += commande.commandLine[i].total;
-                    }
-                });
-            }
-            return total;
+            tabMontant.each( function() {
+                total+= parseFloat($(this).text());
+            });
+            total = Math.round(total*100)/100;
+            $('#totalTVA').text(Math.round(total*0.21*100)/100 + ' €');
+            $('#totalFactureTVA').text(Math.round(total*1.21*100)/100 + ' €');
+            return Math.round(total*100)/100;
         }
 
         function getNumClientFacture(id) {
@@ -382,7 +403,7 @@
                 jour='';
 
             if (url=="") {
-                //créer un nouveau numéro de facture
+                //créer un nouveau numéro de facture et l'afficher
                 getNumeroFacture();
 
                 //remplir le <select client> avec les clients existants et "nouveau client" selected
@@ -393,9 +414,9 @@
                 $('#numFacture').text(getNumClientFacture(idFacture));
 
                 //afficher la date de la facture correspondante
-                annee = listingFactures.facture[idFacture-1].date.substr(6);
-                mois = listingFactures.facture[idFacture-1].date.substr(3,2);
-                jour = listingFactures.facture[idFacture-1].date.substr(0,2);
+                annee = listingFactures.facture[idFacture-1].date.substr(0,4);
+                mois = listingFactures.facture[idFacture-1].date.substr(5,2);
+                jour = listingFactures.facture[idFacture-1].date.substr(8);
                 $('#dateFacture').val(annee+'-'+mois+'-'+jour);
 
                 //remplir le <select client> avec les clients existants et client correspondant en "selected"
@@ -403,15 +424,21 @@
                     //cherhcer l'<option> avec l'idclient correspondant a l'idclient de la facture et le mettre en selected
                         //get facture.idclient
                         //mettre <option value=facture.idClient> en selected
+                    //--------------
+                    //  A REVOIR  --
+                    //--------------
                 afficherClientSelect(idFacture);
 
                 //afficher les lignes de commandes avec le numéro de Facture correspondant
                 afficherLocalStorage(idFacture);
             }
 
-
-
+            //fonction de sauvegarde et d'affichage d'une ligne de facture (sauvegarder dans local storage et afficher dans page html dans le ul)
             app.on('click', '#saveLineFacture', function () {
+                //ouvrir le local storage
+                //stocker les données sous forme de json
+                //Afficher les données dans le <ul>
+                //Calculer le total de la facture et l'afficher
                var description=$('#descriptionTache').val(),
                    quantite=$('#quantiteTache').val(),
                    montant=$('#montantTacheHtva').val();
@@ -421,10 +448,21 @@
                return false;
             });
 
+            //fonction de suppression d'une ligne de facture
             app.on('click', '.btn-suppr', function () {
+                //Ouvrir le local storage
+                //Supprimer l'élément correspondant
+                //MàJ du local storage
+                //Réinitialiser (supprimer les li) le <ul> de la page html
+                //Afficher les données modifiées dans le <ul> de la page html
+                //Calculer le total de la facture et l'afficher
+                //---------------------------------------------------------------------------------------
+                //RECALCULER LE TOTAL DE LA FACTURE ET LE STOCKER DANS LE LOCAL STORAGE CORRESPONDANT !!-
+                //---------------------------------------------------------------------------------------
                 var id = $(this).data("tache"),
                     facture = store.get('lignesDeCommande'),
-                    j = null;
+                    j = null,
+                    k = null;
 
                 $.each(facture.commandLine, function(i, item) {
                     if (item.id == id) {
@@ -437,11 +475,36 @@
                 }
                 store.set('lignesDeCommande', facture);
                 supprimerLigneTabHTML();
-                afficherLocalStorage(parseInt($('#numFacture')));
+                afficherLocalStorage(parseInt($('#numFacture').text()));
+
+                //Modifier le total facture du local storage
+                totFacture = store.get('liste_Facture');
+                if (typeof totFacture != 'undefined') {
+                    $.each(totFacture.facture, function(i, item) {
+                        if (item.id == parseInt($('#numFacture').text())) {
+                            k = i;
+                        }
+                    });
+                    if (k != null) {
+                        totFacture.facture[k].total = parseFloat($('#totalFacture').text());
+                    }
+                    store.set('liste_Facture', totFacture);
+                }
                 return false;
             });
 
             app.on('click', '.btn-modif', function() {
+                //Ouvrir popup/modal avec les infos de la ligne de facture
+                //Si validation de la modification : 
+                    //Ouvrir le local storage
+                    //Modifier l'élément correspondant
+                    //MàJ du local storage
+                    //Réinitialiser (supprimer les li) le <ul> de la page html
+                    //Afficher les données modifiées dans le <ul> de la page html
+                    //Calculer le total de la facture et l'afficher
+                    //---------------------------------------------------------------------------------------
+                    //RECALCULER LE TOTAL DE LA FACTURE ET LE STOCKER DANS LE LOCAL STORAGE CORRESPONDANT !!-
+                    //---------------------------------------------------------------------------------------
                 var facture = store.get('lignesDeCommande'),
                     id = $(this).data("tache"),
                     j = null;
@@ -464,8 +527,6 @@
                     store.set('lignesDeCommande', facture);
                     supprimerLigneTabHTML();
                     afficherLocalStorage(parseInt($('#numFacture').text()));
-                    $('#totalFacture').text(calculTotalFacture(parseInt($('#numFacture').text())));
-                    $('#totalFacture').show();
                     $("#popupModif").modal('hide');
                 });
                 return false;
@@ -479,7 +540,7 @@
                 if (idClient == 'newClient') {
                     $('#popupClient').modal('show');
                 } else {
-                    afficherInfoClient(listingClient.client[idClient-1].nom, listingClient.client[idClient-1].prenom, listingClient.client[idClient-1].rue, listingClient.client[idClient-1].numero, listingClient.client[idClient-1].codePostal, listingClient.client[idClient-1].ville, listingClient.client[idClient-1].pays);
+                    afficherInfoClient(listingClient.client[idClient-1]);
                 }
                 return false;
             });
@@ -526,7 +587,7 @@
                 store.set('liste_Client', listingClient);
 
                 //Affichage des coordonnées du nouveau client dans la page HTML + display le div correspondant
-                afficherInfoClient(nom, prenom, rue, numero, codePostal, ville, pays);
+                afficherInfoClient(listingClient.client[listingClient.cpt-1]);
 
                 //Afficher nom prenom et id du client dans le select
                 $('#nameOfClient').append('<option value="' + listingClient.cpt + '" selected>' + getNumClientFacture(listingClient.cpt) + ' ' + nom + ' ' + prenom+ '</option>');
@@ -536,32 +597,82 @@
             });
 
             app.on('click', '#saveFacture', function() {
+
+                //-----------------------------------------------------------------------------------------------
+                //ATTENTION : VERIFIER SI LA FACTURE EXISTE DEJA, SI OUI MODIFIER FACTURE ET PAS CREER NOUVELLE -
+                //-----------------------------------------------------------------------------------------------
+
                 var listeFacture = store.get('liste_Facture'),
                     dateFac = $('#dateFacture').val(),
                     idClientTxt = $('#nameOfClient').val(),
-                    totalFactureTxt = $('#totalFacture').text();
+                    totalFactureTxt = $('#totalFactureTVA').text(),
+                    j = null;
 
-                if (dateFac != '' && idClientTxt != 'newClient') {
-                    if (typeof listeFacture == 'undefined') {
-                        listeFacture = {
-                            'cpt' : 0,
-                            'facture' : []
-                        };
+                if (url=="") { //SI NOUVELLE FACTURE
+                    if (dateFac != '' && idClientTxt != 'newClient') {
+                        if (typeof listeFacture == 'undefined') {
+                            listeFacture = {
+                                'cpt' : 0,
+                                'facture' : []
+                            };
+                        }
+
+                        listeFacture.facture.push({
+                            'id' : listeFacture.cpt + 1,
+                            'date' : dateFac,
+                            'idClient' : parseInt(idClientTxt),
+                            'total' : parseFloat(totalFactureTxt)
+                        });
+                        listeFacture.cpt += 1;
+                        store.set('liste_Facture', listeFacture);
                     }
-
-                    listeFacture.facture.push({
-                        'id' : listeFacture.cpt + 1,
-                        'date' : dateFac,
-                        'idClient' : parseInt(idClientTxt),
-                        'total' : parseFloat(totalFactureTxt)
+                    else {
+                        alert('Erreur date ou client');
+                    }
+                } else { //SI FACTURE EXISTE DEJA, JUSTE MODIFIER LE TOTAL ET PAS LES AUTRES INFOS
+                    $.each(listeFacture.facture, function(i, item) {
+                        if (listeFacture.facture[i].id == idFacture){
+                            j=i;
+                        }
                     });
-                    listeFacture.cpt += 1;
+                    listeFacture.facture[j].total = parseFloat(totalFactureTxt);
                     store.set('liste_Facture', listeFacture);
                 }
-                else {
-                    alert('Erreur date ou client');
-                }
+                document.location.href='index.html';
                 return false;
+            });
+
+            //Si annulation de la commande, créer une fonction qui supprimera les lignes de factures créées précédemment
+            app.on('click', '#cancelFacture', function() {
+                var listeLigneFacture = store.get('lignesDeCommande'),
+                    tabIndiceLine = [],
+                    j=0, k=1, longueur=0;
+
+                if (url=="") {
+                    //Supprimer les lignes de factures créées sans facture sauvegardée
+                    if (typeof listeLigneFacture != 'undefined') {
+                        $.each(listeLigneFacture.commandLine, function(i, item){
+                            if (listeLigneFacture.commandLine[i].idFacture == parseInt($('#numFacture').text())){
+                                tabIndiceLine[j] = i;
+                                j++;
+                            }
+                        });
+                        if (j>0) {
+                            longueur = tabIndiceLine.length
+                            while (k<=longueur) {
+                                listeLigneFacture.commandLine.splice(tabIndiceLine[longueur-k],1);
+                                k++;
+                            }
+                            store.set('lignesDeCommande', listeLigneFacture);
+                        }
+                    }
+                } else {
+                    //Supprimer les lignes de facture rajoutées à celles déjà présentes dans la facture
+                    //TROUVER UN SYSTEME DE CHECK AU CHARGEMENT DE LA PAGE POUR SAVOIR QUELLES LIGNES SONT PRESENTES!!
+                }
+
+                //Retour a la page d'accueil
+                document.location.href='index.html';
             });
         });
     </script>

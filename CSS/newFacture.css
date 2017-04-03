@@ -22,9 +22,6 @@ h1 {
     font-size: 18px;
 }
 
-#coutTotalTache {
-    display: none;
-}
 
 #tabLabelRow {
     display: none;
@@ -47,4 +44,12 @@ h1 {
 
 .lienFacture {
     border: none;
+}
+
+#footFacture {
+    font-weight: bold;
+}
+
+.noBorder {
+    border-top: 5px solid #ddd;
 }
